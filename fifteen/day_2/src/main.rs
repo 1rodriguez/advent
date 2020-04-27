@@ -14,7 +14,7 @@ fn main() {
     print!("The total length of ribbon required is {}", total);
 }
 
-fn process_entry(line : String) -> u32 { // add return type
+fn process_entry(line : String) -> u32 { 
     let line : Vec<&str> = line.split('x').collect();
 
     let length : u32 = line[0]
@@ -50,12 +50,18 @@ fn two_min(length: u32, width : u32, height : u32) -> u32 {
     let lowest : u32 = min(length, min(width, height));
     let mid : u32;
     
-    mid = match lowest {
-        length => min(width, height),
-        width => min(length, height),
-        height => min(length, width),
-        _ => 0,
-    };
+    if length == lowest {
+        mid = min(width, height);
+    } else if width == lowest {
+        mid = min(length, height);
+    } else {
+        mid = min(length, width);
+    } // Why does a match statement not work? lower two arms unreachable
+    // mid = match lowest {
+    // length => min(...),
+    // width => min(...),
+    // height => min(...),
+    // }
 
     2 * (lowest + mid)
 }
