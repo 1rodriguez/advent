@@ -19,10 +19,7 @@ fn into_bits(input : &str) -> Vec<u32> {
         }
     }
     
-//    while bits.len() < 8 {
-//        bits.insert(0,0); // padding until output is a byte long
-//    }
-
+    bits.reverse();
     bits // bit vector follows little-endian convention (least significant bit = 1)
 }
 
@@ -51,15 +48,29 @@ fn append_bits(bit_stream : Vec<u32>) -> Vec<u32> {
     
 }
 
-fn to_64_bit(bit_stream : Vec<u32>) -> Vec<u32> {
+fn to_64_bit(input : &str) { 
     // returns 64-bit version of bit stream (mod 2^64)
 
+    let max : u128 = 2_u128.pow(64);
+
+    let bytes = input.to_string().into_bytes();
+    let mut bin_string : String = "".to_string();
+
+    for entry in bytes {
+        let bin : String = format!("{:b}", entry);
+        bin_string.push_str(&bin);
+    }
+
+    let bin_num : u128 = u128::from_str_radix(&bin_string, 2).unwrap();
+    let bin_num : u128 = bin_num % max;
+
+    let bytes : [u8;16] = bin_num.to_le_bytes();
    
 }
 
 fn test() {
     // bit stream of a = 97 in binary (ASCII representation of "a")
-    assert_eq!(into_bits("a"), [1, 1, 0, 0 , 0, 0, 1]); 
+    assert_eq!(into_bits("a"), [1, 0, 0, 0 , 0, 1, 1]); 
     
     assert_eq!(448, append_bits(vec![1;449]).len() % 512);
     assert_eq!(448, append_bits(vec![1;447]).len() % 512);
@@ -67,4 +78,5 @@ fn test() {
     assert_eq!(448, append_bits(vec![1;969]).len() % 512);
 
     assert_eq!(448, append_bits(into_bits("a")).len() % 512);
+
 }
